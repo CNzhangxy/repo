@@ -112,4 +112,28 @@ function App() {
   );
 }
 
+  return (
+    <Layout>
+      <Header style={{ padding: '0 24px' }}>
+        <h1 style={{ color: 'white' }}>To-Do List</h1>
+      </Header>
+      <Content style={{ padding: '24px' }}>
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <TodoInput onAddTodo={handleAddTodo} />
+          </Col>
+          <Col span={12}>
+            <TodoList
+              todos={todos}
+              onDeleteTodo={handleDeleteTodo}
+              onToggleComplete={handleToggleComplete}
+            />
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
+  );
+}
+
+
 export default App;
