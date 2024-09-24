@@ -1,0 +1,120 @@
+import React, { useState } from 'react';
+import { Layout, Row, Col, Input, Button, List, Checkbox, Typography, Modal, Form, Input as InputAnt, message } from 'antd';
+
+const { Header, Content } = Layout;
+const { Title } = Typography;
+
+// TodoInput Component (same as before)
+// ... (code for TodoInput)
+
+// TodoList Component
+const TodoList = ({ todos, onDeleteTodo, onToggleComplete, onEditTodo, filter, setFilter }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
+
+  const handleEditTodo = (todo) => {
+    setIsEditing(true);
+    setEditingTodo(todo);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingTodo(null);
+  };
+
+  const handleSaveEdit = (values) => {
+    onEditTodo(editingTodo.id, values.text);
+    setIsEditing(false);
+    setEditingTodo(null);
+  };
+
+  const filteredTodos = filter === 'all'
+    ? todos
+    : filter === 'completed'
+    ? todos.filter((todo) => todo.completed)
+    : todos.filter((todo) => !todo.completed);
+
+  return (
+    <div>
+      <Title level={3}>To-Do List</Title>
+      <div style={{ marginBottom: 16 }}>
+        <Button.Group>
+          <Button onClick={() => setFilter('all')} type={filter === 'all' ? 'primary' : 'default'}>
+            All
+          </Button>
+          <Button onClick={() => setFilter('completed')} type={filter === 'completed' ? 'primary' : 'default'}>
+            Completed
+          </Button>
+          <Button onClick={() => setFilter('active')} type={filter === 'active' ? 'primary' : 'default'}>
+            Active
+          </Button>
+        </Button.Group>
+      </div>
+      <List
+        itemLayout="horizontal"
+        dataSource={filteredTodos}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <Button type="primary" onClick={() => handleEditTodo(item)}>
+                Edit
+              </Button>,
+              <Button type="danger" onClick={() => onDeleteTodo(item.id)}>
+                Delete
+              </Button>,
+            ]}
+          >
+            <List.Item.Meta
+              title={
+                <Checkbox
+                  checked={item.completed}
+                  onChange={() => onToggleComplete(item.id)}
+                >
+                  <span style={{ textDecoration: item.completed ? 'line-through' : 'none' }}>
+                    {item.text}
+                  </span>
+                </Checkbox>
+              }
+            />
+          </List.Item>
+        )}
+      />
+      {/* ... (Modal for editing) ... */}
+    </div>
+  );
+};
+
+// App Component
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [filter, setFilter] = useState('all'); // Add filter state
+
+  // ... (other functions: handleAddTodo, handleDeleteTodo, handleToggleComplete, handleEditTodo) ...
+
+  return (
+    <Layout>
+      <Header style={{ padding: '0 24px' }}>
+        <h1 style={{ color: 'white' }}>To-Do List</h1>
+      </Header>
+      <Content style={{ padding: '24px' }}>
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <TodoInput onAddTodo={handleAddTodo} />
+          </Col>
+          <Col span={12}>
+            <TodoList
+              todos={todos}
+              onDeleteTodo={handleDeleteTodo}
+              onToggleComplete={handleToggleComplete}
+              onEditTodo={handleEditTodo}
+              filter={filter}
+              setFilter={setFilter}
+            />
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
+  );
+}
+
+export default App;
